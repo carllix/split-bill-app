@@ -19,6 +19,11 @@ class SplitRequest(BaseModel):
     session_id: str
     items: List[Item]
     assignments: List[PersonAssignment]
+    total_payment: int
+    discount: int
+    discount_plus: int
+    handling_fee: int
+    other_fee: int
 
 class PersonSplitResult(BaseModel):
     name: str

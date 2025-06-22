@@ -24,44 +24,22 @@ app.add_middleware(
 @app.post("/split/pdf")
 def split_and_generate_pdf(data: SplitRequest):
     try:
-        session_id = data.session_id or str(uuid.uuid4())
         results = calculate_split(data)
-
-        # Nilai default
-        total_payment = sum(p.total for p in results)
-        discount = 0
-        discount_plus = 0
-        handling_fee = 0
-        other_fee = 0
-
-        # Ambil dari item "khusus"
-        for i in data.items:
-            lname = i.name.lower()
-            if lname == "__total_payment__":
-                total_payment = i.unit_price
-            elif lname == "__discount__":
-                discount = i.unit_price
-            elif lname == "__discount_plus__":
-                discount_plus = i.unit_price
-            elif lname == "__handling_fee__":
-                handling_fee = i.unit_price
-            elif lname == "__other_fee__":
-                other_fee = i.unit_price
 
         pdf_path = generate_split_pdf(
             results,
             data.items,
-            session_id=session_id,
-            total_payment=total_payment,
-            handling_fee=handling_fee,
-            other_fee=other_fee,
-            discount=discount,
-            discount_plus=discount_plus
+            data.session_id,
+            data.total_payment,
+            data.handling_fee,
+            data.other_fee,
+            data.discount,
+            data.discount_plus
         )
 
         return FileResponse(
             path=pdf_path,
-            filename=f"split_summary_{session_id}.pdf",
+            filename=f"split_summary_{data.session_id}.pdf",
             media_type="application/pdf"
         )
     except Exception as e:
