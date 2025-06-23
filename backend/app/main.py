@@ -45,8 +45,6 @@ def split_and_generate_pdf(data: SplitRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-
 @app.post("/upload/parse")
 async def upload_and_parse(file: UploadFile = File(...)):
     try:
@@ -68,14 +66,5 @@ async def upload_and_parse(file: UploadFile = File(...)):
             "total_payment": total_payment,
         })
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/split")
-def split_only(data: SplitRequest):
-    try:
-        results = calculate_split(data)
-        return results
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
