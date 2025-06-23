@@ -1,0 +1,32 @@
+[variables]
+NIXPACKS_BUILD_CMD = "echo 'Monorepo detected'"
+
+[phases.build]
+dependsOn = ["install"]
+cmds = ["echo 'Building monorepo'"]
+
+[phases.install]
+cmds = ["echo 'Please deploy services individually'"]
+
+# Buat juga file docker-compose.yml alternatif
+version: '3.8'
+services:
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+  
+  frontend:
+    build:
+      context: ./frontend  
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE_URL=http://backend:8000
+    depends_on:
+      - backend
