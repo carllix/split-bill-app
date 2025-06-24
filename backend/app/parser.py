@@ -16,8 +16,6 @@ def extract_items_from_pdf(file_path: str):
     text = "\n".join(page.get_text() for page in doc)
     lines = text.splitlines()
 
-    print(lines)
-
     items = []
     i = 0
     while i < len(lines):
@@ -101,8 +99,6 @@ def extract_items_from_pdf(file_path: str):
                     continue
         
         i += 1
-
-    print(items)
 
     total_price = extract_number("Total harga", text)
     handling_fee = extract_number("Biaya penanganan dan pengiriman", text)
