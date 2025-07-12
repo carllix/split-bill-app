@@ -4,7 +4,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from app.models import PersonSplitResult, ItemAssignment, Item
 from typing import List
-import os
+import io
 
 def generate_split_pdf(
     results: List[PersonSplitResult],
@@ -14,13 +14,11 @@ def generate_split_pdf(
     handling_fee: int,
     other_fee: int,
     discount: int,
-    discount_plus: int,
-    output_dir: str = "output"
-):
-    os.makedirs(output_dir, exist_ok=True)
-    file_path = os.path.join(output_dir, f"split_summary_{session_id}.pdf")
-
-    doc = SimpleDocTemplate(file_path, pagesize=A4)
+    discount_plus: int
+) -> bytes:
+    buffer = io.BytesIO()
+    
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
     styles = getSampleStyleSheet()
     total_style = ParagraphStyle(name="TotalStyle", textColor=colors.red, fontSize=10)
     bold_style = ParagraphStyle(name="BoldStyle", fontSize=10, fontName="Helvetica-Bold")
@@ -52,7 +50,6 @@ def generate_split_pdf(
                 f"Rp{item_subtotal:,}"
             ])
 
-        # Hitung proporsional fee dan diskon
         prop_ratio = subtotal / subtotal_sum if subtotal_sum > 0 else 0
         handling_share = round(prop_ratio * handling_fee)
         other_share = round(prop_ratio * other_fee)
@@ -85,7 +82,6 @@ def generate_split_pdf(
         elements.append(table)
         elements.append(Spacer(1, 10))
 
-    # Ringkasan akhir
     elements.append(Spacer(1, 12))
     elements.append(Paragraph(f"<b>Total Biaya Penanganan: Rp{handling_fee:,}</b>", styles['Normal']))
     elements.append(Paragraph(f"<b>Total Biaya Lainnya: Rp{other_fee:,}</b>", styles['Normal']))
@@ -94,4 +90,8 @@ def generate_split_pdf(
     elements.append(Paragraph(f"<b>Total Pembayaran Akhir: Rp{total_payment:,}</b>", styles['Title']))
 
     doc.build(elements)
-    return file_path
+    
+    pdf_bytes = buffer.getvalue()
+    buffer.close()
+    
+    return pdf_bytes
