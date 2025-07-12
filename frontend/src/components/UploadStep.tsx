@@ -69,7 +69,7 @@ export default function UploadStep({ onError }: UploadStepProps) {
         <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
           <Upload className="w-8 h-8 text-blue-500" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload Receipt</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Upload GoFood Receipt</h2>
         <p className="text-gray-600">Upload your receipt PDF to get started</p>
       </div>
 
